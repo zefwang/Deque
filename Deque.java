@@ -1,4 +1,6 @@
 import tester.Tester;
+// TODO:
+// add all necessary comments
 
 abstract class ANode<T> {
   ANode<T> next;
@@ -28,6 +30,25 @@ class Sentinel<T> extends ANode<T> {
   int addNode() {
     return 0;
   }
+
+  void addAtHead(T insert) {
+    // local variable that doesn't do anything.. should we change?
+    Node<T> inserted = new Node<T>(insert, this.next, this);
+  }
+
+  void addAtTail(T insert) {
+    Node<T> inserted = new Node<T>(insert, this, this.prev);
+  }
+
+  void removeFromHead() {
+    this.updateNext(this.next.next);
+    this.next.next.updatePrevious(this);
+  }
+
+  void removeFromTail() {
+    this.updatePrevious(this.prev.prev);
+    this.prev.prev.updateNext(this);
+  }
 }
 
 class Node<T> extends ANode<T> {
@@ -46,8 +67,8 @@ class Node<T> extends ANode<T> {
     this.next = next;
     this.prev = prev;
     this.data = data;
-    this.prev.updateNext(this); // Have to use field of field here
-    this.next.updatePrevious(this); // Moving these to a separate method
+    this.prev.updateNext(this);
+    this.next.updatePrevious(this);
   }
 
   int addNode() {
@@ -68,6 +89,22 @@ class Deque<T> {
 
   int size() {
     return this.header.sizeSent();
+  }
+
+  void addAtHead(T insert) {
+    this.header.addAtHead(insert);
+  }
+
+  void addAtTail(T insert) {
+    this.header.addAtTail(insert);
+  }
+
+  void removeFromHead() {
+    this.header.removeFromHead();
+  }
+
+  void removeFromTail() {
+    this.header.removeFromTail();
   }
 }
 
@@ -113,4 +150,16 @@ class ExamplesDeque {
     t.checkExpect(this.deque2.size(), 4);
     t.checkExpect(this.deque3.size(), 4);
   }
+  void testTest(Tester t) {
+    initData();
+    this.deque3.addAtHead("tester");
+    t.checkExpect(this.deque3.header.next, new Node<String>("tester", n5, this.deque3.header));
+  }
+
+  void testingTester(Tester t) {
+    initData();
+    this.deque3.addAtTail("testeragain");
+    t.checkExpect(this.deque3.header.prev, new Node<String>("testeragain", this.deque3.header, n8));
+  }
+
 }
