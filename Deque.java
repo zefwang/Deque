@@ -17,6 +17,17 @@ abstract class ANode<T> {
   abstract int addNode();
 
   abstract ANode<T> findNode(IPred<T> pred);
+  
+  void updateNode(ANode<T> desiredNext, ANode<T> desiredPrev) {
+    this.next = desiredNext;
+    this.prev = desiredPrev;
+    desiredNext.prev = this;
+    desiredPrev.next = this;
+  }
+  
+  boolean isSentinel() {
+    return false;
+  }
 }
 
 class Sentinel<T> extends ANode<T> {
@@ -72,6 +83,10 @@ class Sentinel<T> extends ANode<T> {
   ANode<T> findNode(IPred<T> pred) {
     return this;
   }
+  
+  boolean isSentinel() {
+    return true;
+  }
 }
 
 class Node<T> extends ANode<T> {
@@ -106,11 +121,6 @@ class Node<T> extends ANode<T> {
       return this.next.findNode(pred);
     }
   }
-
-  void updateDeque(ANode<T> previous, ANode<T> next, ANode<T> newPrevious, ANode<T> newNext) {
-    previous.next = newNext;
-    next.prev = newPrevious;
-  }
 }
 
 class Deque<T> {
@@ -128,41 +138,31 @@ class Deque<T> {
     return this.header.sizeSent();
   }
 
-//  void addAtHead(T insert) {
-//    this.header.addAtHead(insert);
-//  }
-//
-//  void addAtTail(T insert) {
-//    this.header.addAtTail(insert);
-//  }
-//
-//  Node<T> removeFromHead() {
-//    return this.header.removeHead();
-//  }
-//
-//  Node<T> removeFromTail() {
-//    return this.header.removeTail();
-//  }
-
   void addAtHead(T insert) {
     Node<T> addNode = new Node<T>(insert);
-    addNode.updateDeque(this.header, this.header.next, addNode, addNode);
+    addNode.updateNode(this.header.next, this.header);
   }
 
   void addAtTail(T insert) {
     Node<T> addNode = new Node<T>(insert);
-    addNode.updateDeque(this.header.prev, this.header, addNode, addNode);
+    addNode.updateNode(this.header, this.header.prev);
   }
 
   Node<T> removeFromHead() {
+    if (this.header.next.isSentinel()) {
+      throw new RuntimeException("Empty list");
+    }
     Node<T> toRemove = (Node<T>)this.header.next;
-    this.header.updateDeque(this.header, this.header.next.next, this.header, this.header.next.next);
+    this.header.updateNode(toRemove.next, this.header.prev);
     return toRemove;
   }
 
   Node<T> removeFromTail() {
+    if (this.header.prev.isSentinel()) {
+      throw new RuntimeException("Empty list");
+    }
     Node<T> toRemove = (Node<T>)this.header.prev;
-    this.updateDeque();
+    this.header.updateNode(this.header.next, toRemove.prev);
     return toRemove;
   }
 
@@ -172,7 +172,7 @@ class Deque<T> {
   }
 
   void removeNode(ANode<T> target) {
-    //Not done yet
+    target.prev.updateNode(target.next, target.prev.prev);
   }
 }
 
@@ -251,8 +251,7 @@ class ExamplesDeque {
   void testRemoveFromHead(Tester t) {
     this.initData();
 
-    // t.checkException(new RuntimeException("Empty list"),
-    // this.deque1.removeFromHead(), "Sentinel<T>");
+    t.checkException(new RuntimeException("Empty list"), this.deque1, "removeFromHead");
     t.checkExpect(this.deque2.removeFromHead(), this.n1);
     t.checkExpect(this.deque2.removeFromHead(), this.n2);
     t.checkExpect(this.deque3.removeFromHead(), this.n5);
@@ -267,7 +266,7 @@ class ExamplesDeque {
   void testRemoveFromTail(Tester t) {
     this.initData();
 
-    t.checkException(new RuntimeException("Empty list"), this.deque1, "removeFromHead");
+    t.checkException(new RuntimeException("Empty list"), this.deque1, "removeFromTail");
     t.checkExpect(this.deque2.removeFromTail(), this.n4);
     t.checkExpect(this.deque2.removeFromTail(), this.n3);
     t.checkExpect(this.deque3.removeFromTail(), this.n8);
