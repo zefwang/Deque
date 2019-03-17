@@ -1,6 +1,7 @@
 import tester.Tester;
 // TODO:
 // add all necessary comments
+// Abstract addAtHead, addAtTail, removeFromHead and removeFromTail.  
 
 abstract class ANode<T> {
   ANode<T> next;
