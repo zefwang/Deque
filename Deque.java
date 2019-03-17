@@ -148,22 +148,22 @@ class Deque<T> {
     addNode.updateNode(this.header, this.header.prev);
   }
 
-  Node<T> removeFromHead() {
+  T removeFromHead() {
     if (this.header.next.isSentinel()) {
       throw new RuntimeException("Empty list");
     }
     Node<T> toRemove = (Node<T>) this.header.next;
     this.header.updateNode(toRemove.next, this.header.prev);
-    return toRemove;
+    return toRemove.data;
   }
 
-  Node<T> removeFromTail() {
+  T removeFromTail() {
     if (this.header.prev.isSentinel()) {
       throw new RuntimeException("Empty list");
     }
     Node<T> toRemove = (Node<T>) this.header.prev;
     this.header.updateNode(this.header.next, toRemove.prev);
-    return toRemove;
+    return toRemove.data;
   }
 
   ANode<T> find(IPred<T> pred) {
