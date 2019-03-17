@@ -17,14 +17,14 @@ abstract class ANode<T> {
   abstract int addNode();
 
   abstract ANode<T> findNode(IPred<T> pred);
-  
+
   void updateNode(ANode<T> desiredNext, ANode<T> desiredPrev) {
     this.next = desiredNext;
     this.prev = desiredPrev;
     desiredNext.prev = this;
     desiredPrev.next = this;
   }
-  
+
   boolean isSentinel() {
     return false;
   }
@@ -83,7 +83,7 @@ class Sentinel<T> extends ANode<T> {
   ANode<T> findNode(IPred<T> pred) {
     return this;
   }
-  
+
   boolean isSentinel() {
     return true;
   }
@@ -152,7 +152,7 @@ class Deque<T> {
     if (this.header.next.isSentinel()) {
       throw new RuntimeException("Empty list");
     }
-    Node<T> toRemove = (Node<T>)this.header.next;
+    Node<T> toRemove = (Node<T>) this.header.next;
     this.header.updateNode(toRemove.next, this.header.prev);
     return toRemove;
   }
@@ -161,18 +161,19 @@ class Deque<T> {
     if (this.header.prev.isSentinel()) {
       throw new RuntimeException("Empty list");
     }
-    Node<T> toRemove = (Node<T>)this.header.prev;
+    Node<T> toRemove = (Node<T>) this.header.prev;
     this.header.updateNode(this.header.next, toRemove.prev);
     return toRemove;
   }
-
 
   ANode<T> find(IPred<T> pred) {
     return this.header.findPred(pred);
   }
 
   void removeNode(ANode<T> target) {
-    target.prev.updateNode(target.next, target.prev.prev);
+    if (!target.isSentinel()) {
+      target.prev.updateNode(target.next, target.prev.prev);
+    }
   }
 }
 
@@ -180,7 +181,7 @@ interface IPred<T> {
   boolean apply(T t);
 }
 
-class IsSauharda implements IPred<String>{
+class IsSauharda implements IPred<String> {
   public boolean apply(String given) {
     return given.equals("sauharda");
   }
