@@ -33,7 +33,7 @@ class Sentinel<T> extends ANode<T> {
     return 0;
   }
 
-  void addAtHead(T insert) { 
+  void addAtHead(T insert) {
     Node<T> inserted = new Node<T>(insert, this.next, this);
   }
 
@@ -42,7 +42,7 @@ class Sentinel<T> extends ANode<T> {
   }
 
   Node<T> removeHead() {
-    if (this.next.equals(this)) { 
+    if (this.next.equals(this)) {
       throw new RuntimeException("Empty list");
     }
     else {
@@ -106,7 +106,7 @@ class Node<T> extends ANode<T> {
       return this.next.findNode(pred);
     }
   }
-  
+
   void updateDeque(ANode<T> previous, ANode<T> next, ANode<T> newPrevious, ANode<T> newNext) {
     previous.next = newNext;
     next.prev = newPrevious;
@@ -165,7 +165,7 @@ class Deque<T> {
     this.updateDeque();
     return toRemove;
   }
-  
+
 
   ANode<T> find(IPred<T> pred) {
     return this.header.findPred(pred);
@@ -281,9 +281,9 @@ class ExamplesDeque {
 
   void testFind(Tester t) {
     initData();
-    
+
     IsSauharda test1 = new IsSauharda();
-    
+
     t.checkExpect(this.deque3.find(test1), n5);
     t.checkExpect(this.deque2.find(test1), alpha);
     t.checkExpect(this.deque1.find(test1), empty);
