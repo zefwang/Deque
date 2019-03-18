@@ -44,37 +44,39 @@ class Sentinel<T> extends ANode<T> {
     return 0;
   }
 
-  void addAtHead(T insert) {
-    Node<T> inserted = new Node<T>(insert, this.next, this);
-  }
-
-  void addAtTail(T insert) {
-    Node<T> inserted = new Node<T>(insert, this, this.prev);
-  }
-
-  Node<T> removeHead() {
-    if (this.next.equals(this)) {
-      throw new RuntimeException("Empty list");
-    }
-    else {
-      Node<T> fromHead = (Node<T>) this.next; // Guaranteed to be Node because only one sentinel
-      this.updateNext(this.next.next);
-      this.next.next.updatePrevious(this); // TA said we can do this
-      return fromHead;
-    }
-  }
-
-  Node<T> removeTail() {
-    if (this.prev.equals(this)) {
-      throw new RuntimeException("Empty list");
-    }
-    else {
-      Node<T> fromTail = (Node<T>) this.prev;
-      this.updatePrevious(this.prev.prev);
-      this.prev.prev.updateNext(this);
-      return fromTail;
-    }
-  }
+  /*
+   * void addAtHead(T insert) {
+   * Node<T> inserted = new Node<T>(insert, this.next, this);
+   * }
+   *
+   * void addAtTail(T insert) {
+   * Node<T> inserted = new Node<T>(insert, this, this.prev);
+   * }
+   *
+   * Node<T> removeHead() {
+   * if (this.next.equals(this)) {
+   * throw new RuntimeException("Empty list");
+   * }
+   * else {
+   * Node<T> fromHead = (Node<T>) this.next;
+   * this.updateNext(this.next.next);
+   * this.next.next.updatePrevious(this);
+   * return fromHead;
+   * }
+   * }
+   *
+   * Node<T> removeTail() {
+   * if (this.prev.equals(this)) {
+   * throw new RuntimeException("Empty list");
+   * }
+   * else {
+   * Node<T> fromTail = (Node<T>) this.prev;
+   * this.updatePrevious(this.prev.prev);
+   * this.prev.prev.updateNext(this);
+   * return fromTail;
+   * }
+   * }
+   */
 
   ANode<T> findPred(IPred<T> pred) {
     return this.next.findNode(pred);
@@ -237,6 +239,7 @@ class ExamplesDeque {
     t.checkExpect(this.n4.addNode(), 1);
   }
 
+  // IDK IF WE NEED MORE TESTS
   void testAddAtHead(Tester t) {
     initData();
     this.deque3.addAtHead("tester");
@@ -253,39 +256,54 @@ class ExamplesDeque {
     this.initData();
 
     t.checkException(new RuntimeException("Empty list"), this.deque1, "removeFromHead");
-    t.checkExpect(this.deque2.removeFromHead(), this.n1);
-    t.checkExpect(this.deque2.removeFromHead(), this.n2);
-    t.checkExpect(this.deque3.removeFromHead(), this.n5);
-
-    this.initData();
-    // t.checkException(this.empty.removeHead());
-    t.checkExpect(this.alpha.removeHead(), this.n1);
-    t.checkExpect(this.alpha.removeHead(), this.n2);
-    t.checkExpect(this.bois.removeHead(), this.n5);
+    t.checkExpect(this.deque2.removeFromHead(), "abc");
+    t.checkExpect(this.deque2.removeFromHead(), "bcd");
+    t.checkExpect(this.deque3.removeFromHead(), "sauharda");
   }
 
   void testRemoveFromTail(Tester t) {
     this.initData();
 
     t.checkException(new RuntimeException("Empty list"), this.deque1, "removeFromTail");
-    t.checkExpect(this.deque2.removeFromTail(), this.n4);
-    t.checkExpect(this.deque2.removeFromTail(), this.n3);
-    t.checkExpect(this.deque3.removeFromTail(), this.n8);
-
-    this.initData();
-    // t.checkExpect(this.empty.removeTail())
-    t.checkExpect(this.alpha.removeTail(), this.n4);
-    t.checkExpect(this.alpha.removeTail(), this.n3);
-    t.checkExpect(this.bois.removeTail(), this.n8);
+    t.checkExpect(this.deque2.removeFromTail(), "def");
+    t.checkExpect(this.deque2.removeFromTail(), "cde");
+    t.checkExpect(this.deque3.removeFromTail(), "ethan");
   }
 
   void testFind(Tester t) {
     initData();
-
     IsSauharda test1 = new IsSauharda();
 
-    t.checkExpect(this.deque3.find(test1), n5);
-    t.checkExpect(this.deque2.find(test1), alpha);
-    t.checkExpect(this.deque1.find(test1), empty);
+    t.checkExpect(this.deque3.find(test1), this.n5);
+    t.checkExpect(this.deque2.find(test1), this.alpha);
+    t.checkExpect(this.deque1.find(test1), this.empty);
+
+    t.checkExpect(this.n5.findNode(test1), this.n5);
+    t.checkExpect(this.n8.findNode(test1), this.bois);
+    t.checkExpect(this.bois.findNode(test1), this.bois);
+  }
+
+  void testApply(Tester t) {
+    initData();
+    IsSauharda testing = new IsSauharda();
+
+    t.checkExpect(testing.apply("sauharda"), true);
+    t.checkExpect(testing.apply("Sauharda"), false);
+    t.checkExpect(testing.apply("sau"), false);
+  }
+
+  void testRemoveNode(Tester t) {
+    initData();
+    this.deque3.removeNode(n6);
+
+    t.checkExpect(this.n5.next, this.n7);
+    t.checkExpect(this.n7.prev, this.n5);
+  }
+
+  void testIsSentinel(Tester t) {
+    initData();
+
+    t.checkExpect(this.alpha.isSentinel(), true);
+    t.checkExpect(this.n1.isSentinel(), false);
   }
 }
