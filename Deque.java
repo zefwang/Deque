@@ -6,13 +6,13 @@ abstract class ANode<T> {
   ANode<T> next;
   ANode<T> prev;
 
-  void updateNext(ANode<T> target) {
+  /*void updateNext(ANode<T> target) {
     this.next = target;
   }
 
   void updatePrevious(ANode<T> target) {
     this.prev = target;
-  }
+  }*/
 
   abstract int addNode();
 
@@ -107,8 +107,7 @@ class Node<T> extends ANode<T> {
     this.next = next;
     this.prev = prev;
     this.data = data;
-    this.prev.updateNext(this);
-    this.next.updatePrevious(this);
+    this.updateNode(next, prev);
   }
 
   int addNode() {
@@ -286,7 +285,7 @@ class ExamplesDeque {
   void testApply(Tester t) {
     initData();
     IsSauharda testing = new IsSauharda();
-
+    
     t.checkExpect(testing.apply("sauharda"), true);
     t.checkExpect(testing.apply("Sauharda"), false);
     t.checkExpect(testing.apply("sau"), false);
