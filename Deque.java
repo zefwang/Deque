@@ -285,7 +285,7 @@ class ExamplesDeque {
   void testApply(Tester t) {
     initData();
     IsSauharda testing = new IsSauharda();
-    
+
     t.checkExpect(testing.apply("sauharda"), true);
     t.checkExpect(testing.apply("Sauharda"), false);
     t.checkExpect(testing.apply("sau"), false);
